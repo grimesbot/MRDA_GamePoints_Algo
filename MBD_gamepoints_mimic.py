@@ -14,6 +14,7 @@ class RollerDerbyRanks:
 
     def __init__(self, initial_ratings=None):
         self.ratings = initial_ratings if initial_ratings else {}
+        print("set to intial rank")
 
     def add_team(self, team_name, initial_rating=400):
         if team_name not in self.ratings:
@@ -21,6 +22,7 @@ class RollerDerbyRanks:
 
     def set_rating(self, team_name, rating):
         self.ratings[team_name] = rating
+        print("set to new rank")
 
     def update_ratings(self, g):
         for game in g:
@@ -31,26 +33,26 @@ class RollerDerbyRanks:
             #could add the ability to enter a defined date to be able to run past Q results more accurately
             # six_mo = date.today() + relativedelta(months=-6)
             # twelve_mo = date.today() + relativedelta(months=-12)
+            twelve_mo = dateQuery + relativedelta(months=-12)            
             six_mo = dateQuery + relativedelta(months=-6)
-            twelve_mo = dateQuery + relativedelta(months=-12)
+            three_mo = dateQuery + relativedelta(months=-3)
             game_d = datetime.strptime(gdate,'%Y-%m-%d').date()
-            
             
             ra = self.ratings[team_a]
             rb = self.ratings[team_b]
 
             # Calculate expected scores
             ea = ra/rb
-            if ea < 0.25:
-                ea = 0.25
-            if ea > 4:
-                ea = 4
+            if ea < 0.33:
+                ea = 0.33
+            if ea > 3:
+                ea = 3
             
             eb = rb/ra
-            if eb < 0.25:
-                eb = 0.25
-            if eb > 4:
-                eb = 4
+            if eb < 0.33:
+                eb = 0.33
+            if eb > 3:
+                eb = 3
         
             # Determine actual scores
             if score_a == 0:
@@ -58,37 +60,40 @@ class RollerDerbyRanks:
             if score_b == 0:
                 score_b = 1
             sa = score_a/score_b
-            if sa < 0.25:
-                sa = 0.25
-            if sa > 4:
-                sa = 4
+            if sa < 0.33:
+                sa = 0.33
+            if sa > 3:
+                sa = 3
             sb = score_b/score_a
-            if sb < 0.25:
-                sb = 0.25
-            if sb > 4:
-                sb = 4
+            if sb < 0.33:
+                sb = 0.33
+            if sb > 3:
+                sb = 3
                 
             #Game points:
             gpa = ra * (sa/ea)
             gpb = rb * (sb/eb)
-        
+            
+            if game_d > dateQuery:
+                continue             
             if game_d < twelve_mo:
                 continue
-            if game_d > dateQuery:
-                continue
-            if game_d < six_mo:
+                #wt = 0
+            elif game_d < six_mo:
                 wt = 0.25
+            elif game_d < three_mo:
+                wt = 0.5
             else:
                 wt = 1
             
             #Add game points to game list for each teams.
             for x in team_gp_list:
                 if x[0] == team_a: # "['" + team_a + "']":
-                    x.append((date,gpa,wt))
+                    x.append((game_d,gpa,wt))
             for x in team_gp_list:
                 if x[0] == team_b: # "['" + team_a + "']":
-                    x.append((date,gpb,wt))
-            print(game_d,team_a,gpa,team_b,gpb,wt)       #Uncomment for game point details
+                    x.append((game_d,gpb,wt))
+            print(game_d,team_a,ra,f"{gpa:.2f}",team_b,rb,f"{gpb:.2f}",wt)       #Uncomment for game point details
         print('\n')   
         #compute new team score
         for team in team_gp_list:
@@ -108,46 +113,48 @@ class RollerDerbyRanks:
         return self.ratings.get(team_name, "Team not found")
 
 initial_ratings_e = {'BOR': 700, 
-                     'CTB': 300, 
-                     'DHR': 200, 
-                     'KEM': 450,
-                     'MRD': 900, 
-                     'MRD(B)': 200, 
-                     'PAN': 250,  
-                     'TIL': 600,
-                     'TNF': 700, 
-                     'TNF(B)': 200, 
-                     'SWS': 350,
-                     }
+                      'CTB': 300, 
+                      'DHR': 200, 
+                      'KEM': 450,
+                      'MRD': 900, 
+                      'MRD(B)': 200, 
+                      'PAN': 250,  
+                      'TIL': 600,
+                      'TNF': 700, 
+                      'TNF(B)': 200, 
+                      'SWS': 350,
+                      }
+
 
 initial_ratings_w = {
-                     'DGC': 1000,
-                     'SLG': 1200,
-                     'SDA': 550,
-                     'MCM': 900,
-                     'LCC': 370,
-                     'DIS': 370,
-                     'PSO': 350,
-                     'CWB': 370,
-                     'RCR': 350,
-                     'PIT': 350,
-                     'CBB': 350,
-                     'PHH': 350,
-                     'AUA': 350,
-                     'TOM': 300,
-                     'CAB': 300,
-                     'FLC': 100,
-                     'CHC': 120,
-                     'DEM': 80,
-                     'TRD': 50,
-                     'CLM': 50,
-                     'PIT(B)': 20,
-                     'CBB(B)': 40,
-                     'SDA(B)': 132,
-                     'SLG(B)': 204,
-                     'CAB(B)': 40,
-                     'LCC(B)': 100,
+                      'DGC': 1000,
+                      'SLG': 1200,
+                      'SDA': 650,
+                      'MCM': 900,
+                      'LCC': 450,
+                      'DIS': 450,
+                      'PSO': 350,
+                      'CWB': 425,
+                      'RCR': 425,
+                      'PIT': 300,
+                      'CBB': 400,
+                      'PHH': 250,
+                      'AUA': 200,
+                      'TOM': 300,
+                      'CAB': 300,
+                      'FLC': 100,
+                      'CHC': 250,
+                      'DEM': 80,
+                      'TRD': 50,
+                      'CLM': 50,
+                      'PIT(B)': 20,
+                      'CBB(B)': 40,
+                      'SDA(B)': 132,
+                      'SLG(B)': 204,
+                      'CAB(B)': 40,
+                      'LCC(B)': 100,
 }
+
 
 #Games have been updated with dates.
 games_e = [
@@ -204,12 +211,18 @@ games_e = [
         ('2024-04-20','CTB', 262, 'SWS', 158),
         ('2024-04-20','MRD(B)', 299, 'TNF(B)', 181),
     ],
-
     [
         ('2024-05-19','BOR', 213, 'TNF', 253),
         ('2024-05-19','KEM', 21, 'MRD', 308)
     ],
-
+    [
+        ('2024-06-23','TIL', 338, 'KEM', 117),
+        ('2024-06-23','BOR', 271, 'MRD', 101)
+    ],
+    [
+        ('2024-07-06','TNF', 429, 'TIL', 203),
+#        ('2024-07-07','CTB', 1, 'MRD', 1)
+    ],
 ]
 
 games_w = [
@@ -352,22 +365,33 @@ games_w = [
     [
         ('2024-06-01','CLM', 159, 'CBB(B)', 152)
     ],
-#     [   #IHOD-Pt2
-#         ('2024-06-07','SLG(B)', 212, 'SDA(B)', 159),
-# #        ('2024-06-07','DGC', 100, 'DIS', 0),
-#         ('2024-06-07','SLG', 214, 'SDA', 65),
+    [   #IHOD-Pt2
+        ('2024-06-07','SLG(B)', 212, 'SDA(B)', 159),
+#        ('2024-06-07','DGC', 100, 'DIS', 0),
+        ('2024-06-07','SLG', 214, 'SDA', 65),
         
-#         ('2024-06-08','SLG(B)', 149, 'CAB', 233),
-#         ('2024-06-08','RCR', 120, 'SDA', 240),
-#         ('2024-06-08','SLG', 179, 'DGC', 115),
-#         ('2024-06-08','SDA(B)', 110, 'CAB', 266),
-#         ('2024-06-08','RCR', 169, 'DIS', 151),        
+        ('2024-06-08','SLG(B)', 149, 'CAB', 233),
+        ('2024-06-08','RCR', 120, 'SDA', 240),
+        ('2024-06-08','SLG', 179, 'DGC', 115),
+        ('2024-06-08','SDA(B)', 110, 'CAB', 266),
+        ('2024-06-08','RCR', 169, 'DIS', 151),        
         
-#         ('2024-06-09','CAB', 122, 'RCR', 233),
-#         ('2024-06-09','SLG', 323, 'DIS', 57),
-#         ('2024-06-09','DGC', 287, 'SDA', 88),
-
-#     ],
+        ('2024-06-09','CAB', 122, 'RCR', 233),
+        ('2024-06-09','SLG', 323, 'DIS', 57),
+        ('2024-06-09','DGC', 287, 'SDA', 88),
+    ],
+    [
+        ('2024-06-15','FLC', 233, 'CLM', 79)
+    ],
+    [
+        ('2024-06-15','RCR', 49, 'SLG', 277)
+    ],
+    [
+        ('2024-06-29','PHH', 186, 'FLC', 124)
+    ],
+    [
+        ('2024-07-06','TRD', 165, 'CLM', 123)
+    ],
     
 ]
 
@@ -425,8 +449,8 @@ rank_w = RollerDerbyRanks(initial_ratings_w)
 team_gp_list = [['BOR'],['CTB'],['KEM'],
                 ['MRD'],['MRD(B)'],['SWS'],['TIL'],['TNF'],['TNF(B)']]
 
-for gameday_e in games_e:
-    rank_e.update_ratings(gameday_e)
+#for gameday_e in games_e:
+#    rank_e.update_ratings(gameday_e)
 
 print("\n")
 print("Game count")
@@ -462,14 +486,14 @@ sorted_ratings_e = sorted(rank_e.ratings.items(), key=lambda item: item[1], reve
 sorted_ratings_w = sorted(rank_w.ratings.items(), key=lambda item: item[1], reverse=True)
 
 print("\n")
-print("\n")
+print(f"Rankings as of {dateQuery}")
 # Print the ratings in a formatted table
 print("MRDA West")
 print("Position\tTeam\tRating")
 position = 1
 for code, rating in sorted_ratings_w:
     full_name = team_names.get(code, "Unknown Team")
-    print(f"{position}\t{full_name}\t{rating:.2f}")
+    print(f"{position}\t{code}\t{rating:.2f}")
     position += 1
 print("\n")
 print("MRDA East")
@@ -477,7 +501,7 @@ print("Position\tTeam\tRating")
 position = 1
 for code, rating in sorted_ratings_e:
     full_name = team_names.get(code, "Unknown Team")
-    print(f"{position}\t{full_name}\t{rating:.2f}")
+    print(f"{position}\t{code}\t{rating:.2f}")
     position += 1
 
 

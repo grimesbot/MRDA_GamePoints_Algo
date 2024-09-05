@@ -9,6 +9,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import tkinter as tk
 from tkinter import simpledialog
+from tkcalendar import Calendar
 from GameList import games_e
 from GameList import games_w
 from dicts import initial_ratings_e
@@ -151,7 +152,7 @@ for team in team_gp_list:
     print(team[0] , len(team_gp_list[t])-1)
     t += 1
 
-team_gp_list = [['AUA'],['CAB'],['CAB(B)'],['CBB'],['CBB(B)'],['CHK'],['CLM'],['CWB'],
+team_gp_list = [['AUA'],['CAB'],['CAB(B)'],['CBB'],['CBB(B)'],['CHK'],['CLG'],['CWB'],
                 ['DEM'],['DGC'],['DIS'],
                 ['FLC'],['CRD'],['CRD(B)'],['PHH'],['PHH(B)'],['PIT'],['PIT(B)'],['PSO'],['MCM'],
                 ['RCR'],['SLG'],['SLG(B)'],['SDA'],['SDA(B)'],
@@ -165,7 +166,7 @@ ratings_e = {team: rank_e.get_rating(team) for team in
              ['BOR', 'CTB', 'KEM', 'MRD', 'MRD(B)', 'TIL', 'TNF', 'TNF(B)', 'SWS']}
 
 ratings_w = {team: rank_w.get_rating(team) for team in
-             ['AUA', 'CWB', 'CAB', 'CBB', 'CHK', 'CLM', 'DGC', 'DEM', 'DIS', 'FLC', 'CRD', 'MCM', 'PHH', 'PHH(B)', 'PIT', 'PIT(B)',
+             ['AUA', 'CWB', 'CAB', 'CBB', 'CHK', 'CLG', 'DGC', 'DEM', 'DIS', 'FLC', 'CRD', 'MCM', 'PHH', 'PHH(B)', 'PIT', 'PIT(B)',
               'PSO', 'RCR', 'SDA', 'SLG', 'TRD', 'TOM']}
 
 sorted_ratings_e = sorted(rank_e.ratings.items(), key=lambda item: item[1], reverse=True)
@@ -181,7 +182,7 @@ for code, rating in sorted_ratings_w:
     if gamecount_active[code] > 2:
         full_name = team_names.get(code, "Unknown Team")
 #        print(f"{position}\t{code}\t{rating:.2f}")
-        print(f"{position}\t{full_name}\t{rating:.2f}") if (gamecount_active[code] > 4 or (code in ['CRD','DIS','PSO','SDA'] and gamecount_active[code] > 2)) else print(f"{position}\t{full_name}*\t{rating:.2f}")
+        print(f"{position}\t{full_name}\t{rating:.2f}") if (gamecount_active[code] > 4 or (code in ['CRD','CRD(B)','DIS','PSO','SDA','SDA(B)'] and gamecount_active[code] > 2)) else print(f"{position}\t{full_name}*\t{rating:.2f}")
         position += 1
 print("\n")
 print("MRDA East")

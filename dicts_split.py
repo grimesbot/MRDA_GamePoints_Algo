@@ -5,12 +5,8 @@ Created on Tue Aug 20 10:27:17 2024
 @author: shender
 """
 
-initial_ratings = {'BOR': 600,'CTB': 300,'DHR': 200,'KEM': 450,'MRD': 600,'MRD(B)': 100,'NDT': 150, 'PAN': 250,'RDT': 200, 
-                   'TIL': 500,'TNF': 600,'TNF(B)': 100,'SWS': 250,
-                   'DGC': 1000,'SLG': 1200,'SDA': 650,'MCM': 900,'CRD': 450,'DIS': 450,'PSO': 350,
-                   'CWB': 425,'RCR': 425,'PIT': 300,'CBB': 400,'PHH': 250,'AUA': 200,'TOM': 300,'CAB': 300,
-                   'FLC': 100,'CHK': 250,'DEM': 80,'TRD': 50,'CLG': 50,'PIT(B)': 20,'CBB(B)': 40,'SDA(B)': 120,
-                   'SLG(B)': 180,'CAB(B)': 40,'CRD(B)': 100,'PHH(B)': 150}
+initial_ratings_e = {'BOR': 700,'CTB': 300,'DHR': 200,'KEM': 450,'MRD': 900,'MRD(B)': 200,'PAN': 250,'TIL': 600,'TNF': 700,'TNF(B)': 200,'SWS': 350,}
+initial_ratings_w = {'DGC': 1000,'SLG': 1200,'SDA': 650,'MCM': 900,'CRD': 450,'DIS': 450,'PSO': 350,'CWB': 425,'RCR': 425,'PIT': 300,'CBB': 400,'PHH': 250,'AUA': 200,'TOM': 300,'CAB': 300,'FLC': 100,'CHK': 250,'DEM': 80,'TRD': 50,'CLG': 50,'PIT(B)': 20,'CBB(B)': 40,'SDA(B)': 120,'SLG(B)': 180,'CAB(B)': 40,'CRD(B)': 100,'PHH(B)': 150}
 
 team_names = {
     'AUA': 'Austin Anarchy',
@@ -46,9 +42,7 @@ team_names = {
     'KEM': 'Kent Men\'s Roller Derby',
     'MRD': 'Manchester Roller Derby',
     'MRD(B)': 'Manchester (B)',
-    'NDT': 'Nordicks de Touraine',
     'PAN': 'Panam Squad',
-    'RDT': 'Roller Derby Toulouse',
     'TIL': 'The Inhuman League',
     'TNF': 'Tyne and Fear Roller Derby',
     'TNF(B)': 'Tyne and Fear (B)',

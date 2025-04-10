@@ -5,6 +5,7 @@ Created on Wed May  1 08:42:51 2024
 @author: shender
 """
 from datetime import datetime
+from datetime import date
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
@@ -49,22 +50,23 @@ class RollerDerbyRanks:
                 for x in team_gp_dict[team]:
                     #print(date_query)
                     delta = (game_d - x[0]).days
-                    # print(delta)
                     if delta >= 365: #if x[0][0] < (game_d + relativedelta(months=-12)):
                         #print(game_d, ": game too old")
                         z+=1
                         continue
-                    elif 183 <= delta < 270: #elif x[0][0] < (game_d + relativedelta(months=-9)):
+                    #elif 183 <= delta < 270: #elif x[0][0] < (game_d + relativedelta(months=-9)):
                         #print(game_d, ": games weighted to 0.25")
-                        wt = 0.5
-                    elif 271 <= delta < 365: #elif x[0][0] < (game_d + relativedelta(months=-9)):
+                    #    wt = 0.5
+                    #elif 271 <= delta < 365: #elif x[0][0] < (game_d + relativedelta(months=-9)):
                         #print(game_d, ": games weighted to 0.25")
-                        wt = 0.25
+                    #    wt = 0.25
                     #elif x[0] < (game_d + relativedelta(months=-6)):
                     #    wt = 0.5
+                    if x[0].year < date_query.year:  
+                        wt = 0.1
                     else:
-                        wt = 1
-                    
+                        wt = 1  
+
                     if x[4] != 1:
                         gp_weighted = x[4]**wt
                         gp *= gp_weighted
@@ -81,13 +83,19 @@ class RollerDerbyRanks:
                     if len(team_gp_dict[team][z]) == 5:
                         team_gp_dict[team][z].append(gpf)
                     z += 1
-                    #if(team=='CAB'):     #Enter a team to track their gpf for troubleshooting. Here it's computed for on every gameday, for each of the games played by THIS team.
-                    #     print(x[0],x[4],wt,"current gpf = ",gpf)
+                    #if(team=='DGC'):     #Enter a team to track their gpf for troubleshooting. Here it's computed for on every gameday, for each of the games played by THIS team.
+                        #print("gameday = ",x[0], game_d.year, "gp = ", x[4],"wt = ", wt,"current gpf = ",gpf)
+                        #print(game_d.year, date_query.year)
                     self.ratings[team] = gpf
-                    gcount += 1
+                    
+                    #Count games for ranking and post season elligibility. Exclude Champs games. This will fail IF other games are played on the same days as champs
+                    #P&P: Qualifier games shouldn't count after 9 months. Champs after 6 months...
+                    champs_dates = {date(2024, 10, 11), date(2024, 10, 12), date(2024, 10, 13)}
+                    if x[0] not in champs_dates:
+                        gcount += 1
 
-                # if(team[0]=='DGC'):     #Enter a team to track their gpf at the end of each gameday (regardless if they played)
-                #     print(game_d,x[0],wt,"current gpf = ",gpf)
+                # if(team=='DGC'):     #Enter a team to track their gpf at the end of each gameday (regardless if they played)
+                #     print(game_d,x[0],"current gpf = ",gpf)
                 self.gamecount[team] = gcount
 
 
@@ -126,13 +134,13 @@ class RollerDerbyRanks:
                     #     if x[0] == team_b:
                     #         x.append((game_d,1))
                     team_gp_dict[team_b].append(list((game_d,f"forfeit by {score_a} {team_a}", eb, "-", 1)))
-                    print(game_d,team_a,ra,"forfeit",team_b,rb,"1")
+                    #print(game_d,team_a,ra,"forfeit",team_b,rb,"1")
                 if score_b == 0:
                     # for x in team_gp_list:
                     #     if x[0] == team_a:
                     #         x.append((game_d,1))
                     team_gp_dict[team_a].append(list((game_d,f"forfeit by {team_b}", ea, "-", 1)))
-                    print(game_d,team_a,ra,"1",team_b,rb,"forfeit")
+                    #print(game_d,team_a,ra,"1",team_b,rb,"forfeit")
                 continue
             
             # Determine actual scores
@@ -162,7 +170,7 @@ class RollerDerbyRanks:
             team_gp_dict[team_b].append(list((game_d,f"{score_b} vs {score_a} {team_a}", eb, sb, gpb)))
 
             #if team_a =='BOR' or team_b == 'BOR': #game_d > datetime.strptime("2024-10-07",'%Y-%m-%d').date():
-            print(game_d, team_a, score_a, ea, sa, team_b, score_b, eb, sb)       #Uncomment for game point details
+            #print(game_d, team_a, score_a, ea, sa, team_b, score_b, eb, sb)       #Uncomment for game point details
         #print('\n')   
         
         #computescore function!!!

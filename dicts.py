@@ -7,14 +7,14 @@ Created on Tue Aug 20 10:27:17 2024
 
 initial_ratings = {'AUA': 200,'CBRD': 300,'CBRD(B)': 40,'CBB': 400,'CBB(B)': 40,
                    'ChCRD': 250,'CGRD': 50,'CRD': 450,'CRD(B)': 100,'CWB': 425,
-                   'DDD': 50000,'DMRD': 80,'DGC': 1000,'DIS': 450,'FCF': 100,'MCM': 900,
+                   'DDD': 250,'DMRD': 80,'DGC': 1000,'DIS': 450,'FCF': 100,'MCM': 900,
                    'PHH': 250,'PHH(B)': 150,'PIT': 300,'PIT(B)': 40,'PSOD': 350,
                    'RCR': 425,'SDA': 650,'SDA(B)': 120,'SLGK': 1200,'SLGK(B)': 180,
-                   'TMP': 50000,'TRD': 50,'TMRD': 300, 'WURD': 50000,
+                   'TMP': 140,'TRD': 50,'TMRD': 300, 'WURD': 50000,
                    
                    'BBRD': 600,'CTB': 250,'DHR': 200,'KMRD': 450,'MRD': 600,'MRD(B)': 100, 'NDT': 220,
-                   'ORD': 50000, 'PAN': 250,'RDNA': 50000, 'SDRD': 50000, 'SWS': 250, 'TIL': 500,'TNF': 600,
-                   'TNF(B)': 100,'RDT': 800,'WRD': 290,
+                   'ORD': 200, 'PAN': 250,'RDNA': 160, 'SDRD': 925, 'SWS': 250, 'TIL': 500,'TNF': 600,
+                   'TNF(B)': 100,'RDT': 800,'WRD': 264,
                    '15RRD': 50000
                    }
 
@@ -71,7 +71,7 @@ team_names = {
     'TNF(B)': 'Tyne and Fear (B)',
     'WRD': 'Wirral Roller Derby',
     
-    '15RRD': '15 Ronins Roller Derby,'
+    '15RRD': '15 Ronins Roller Derby',
 }
 
 gamecount_active = {key: 0 for key in team_names}

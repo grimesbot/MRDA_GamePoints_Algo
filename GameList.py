@@ -391,7 +391,7 @@ games = [
     ],        
     [   #Torneo Tenochititlan
         ('2025-05-03','DIS', 79, 'SLGK', 187),
-        #('2025-05-03','MCM', 101, 'DGC', 161), # Was this not sanctioned? https://www.facebook.com/share/p/1CuGDCkP4f/
+        ('2025-05-03','MCM', 101, 'DGC', 161), # Could not find on MRDA central, but did find on https://api.mrda.org/v1-public/sanctioning/algorithm
         ('2025-05-03','SLGK', 167, 'MCM', 97),
         ('2025-05-04','DIS', 63, 'MCM', 190),
         ('2025-05-04','DIS', 63, 'DGC', 210),

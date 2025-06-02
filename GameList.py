@@ -296,10 +296,8 @@ games = [
         ('2025-02-09','TNF', 100, 'MRD', 0), #forfeit
         ('2025-02-09','TIL', 125, 'TNF', 277),
     ],
-    [
-        ('2025-02-15','KMRD', 232, 'SWS', 178),
-    ],
     [   #5NRD T2M
+        ('2025-02-15','KMRD', 232, 'SWS', 178), #Part of 5NRD T2M, https://www.youtube.com/watch?v=BG7k6-2GMTQ
         ('2025-02-15','WRD', 242, 'TNF(B)', 109), #not verified yet
         ('2025-02-16','WRD', 185, 'SWS', 96), #not verified yet
     ],
@@ -309,8 +307,12 @@ games = [
     [   #5NRD T1M-2
         ('2025-03-08','SDRD', 341, 'TIL', 150),
         ('2025-03-08','TNF', 444, 'CTB', 33),
+        #('2025-03-08','BBRD', 159, 'TIL', 282), #Was this not sanctioned? https://www.youtube.com/watch?v=56o4YO7bKSQ 
         ('2025-03-09','SDRD',223,'TNF',331),
     ],
+    [
+        ('2025-03-09','TNF(B)', 320, 'CTB', 342),
+    ]
     [   #Franky Panky
         ('2025-03-08','DDD', 134, 'PHH', 143),
         ('2025-03-08','TMP', 313, 'TRD', 83),
@@ -320,18 +322,19 @@ games = [
         ('2025-03-09','TMP', 135, 'PHH', 196),
         ('2025-03-09','MCM', 247, 'DDD', 81),    
     ],
-    [
-        ('2025-03-15','WRD', 188, 'KMRD', 138),
-    ],
-
     [   #5N Gameday 2
-        ('2025-03-15','SWS', 184, 'TNF(B)', 181), #not yet validated
-        ('2025-03-15','TNF(B)', 136, 'KMRD', 255), #not yet validated
+        ('2025-03-15','WRD', 188, 'KMRD', 138), #part of 5NT2M-2 https://fivenationsrollerderby.com/fixtures-results/tier-2-mrda-aligned-2025/
+        ('2025-03-16','SWS', 184, 'TNF(B)', 181), #not yet validated
+        ('2025-03-16','TNF(B)', 136, 'KMRD', 255), #not yet validated
     ],
     [   #de France - etape 2
         ('2025-03-15','RDT', 227, 'ORD', 68),
         ('2025-03-15','NDT', 117, 'RDNA', 94),
-        ('2025-03-15','ORD', 237, 'RDNA', 127),
+        ('2025-03-16','ORD', 237, 'RDNA', 127),        
+        #('2025-03-16','RDT', 204, 'NDT', 70), #Was this not sanctioned? https://www.youtube.com/live/tIgjpgzDyM4?si=lOWdRAZz9sa-cLFK
+    ],
+    [
+        ('2025-03-15','CGRD', 219, 'FCF', 171),
     ],
     [   #Dumpster Fire 2025
         ('2025-03-15','CWB', 235, 'CBRD', 88),
@@ -351,6 +354,7 @@ games = [
         ('2025-03-22','SDA', 110, 'DGC', 278),
         ('2025-03-23','PSOD', 148, 'DGC', 305),
         ('2025-03-23','CRD', 256, 'SDA', 82),
+        ('2025-03-22','CRD(B)', 106, 'SDA(B)', 200),
         ('2025-03-23','PSOD', 189, 'SDA', 150),
     ],
     [   #Clover Cup
@@ -387,7 +391,7 @@ games = [
     ],        
     [   #Torneo Tenochititlan
         ('2025-05-03','DIS', 79, 'SLGK', 187),
-        #('2025-05-03','MCM', 101, 'DGC', 161), # Was this not sanctioned?
+        #('2025-05-03','MCM', 101, 'DGC', 161), # Was this not sanctioned? https://www.facebook.com/share/p/1CuGDCkP4f/
         ('2025-05-03','SLGK', 167, 'MCM', 97),
         ('2025-05-04','DIS', 63, 'MCM', 190),
         ('2025-05-04','DIS', 63, 'DGC', 210),

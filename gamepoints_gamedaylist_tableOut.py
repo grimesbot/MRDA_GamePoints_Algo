@@ -258,14 +258,15 @@ sorted_ratings = sorted(rank.ratings.items(), key=lambda item: item[1], reverse=
 print("\n")
 print(f"Rankings as of {date_query}")
 # Print the ratings in a formatted table
-print("Position\tTeam\tGPA")
+print("Position\tTeam\tGPA\tGames Played")
 position = 1
 unranked = []
 for code, rating in sorted_ratings:
     if gamecount_active[code] > 2:
         full_name = team_names.get(code, "Unknown Team")
 #        print(f"{position}\t{code}\t{rating:.2f}")
-        print(f"{position}\t{full_name}\t{rating:.2f}") if (gamecount_active[code] > 4 or (code in ['CRD','CRD(B)','DIS','PSO','SDA','SDA(B)'] and gamecount_active[code] > 2)) else print(f"{position}\t{full_name}*\t{rating:.2f}")
+        gamecount=gamecount_active[code]
+        print(f"{position}\t{full_name}\t{rating:.2f}\t{gamecount}") if (gamecount > 4 or (code in ['CRD','CRD(B)','DIS','PSO','SDA','SDA(B)'] and gamecount > 2)) else print(f"{position}\t{full_name}*\t{rating:.2f}\t{gamecount}")
         position += 1
     else:
         full_name = team_names.get(code, "Unknown Team")
@@ -290,7 +291,7 @@ def plot_team_games(team_code, team_gp_dict, team_names):
     # Extract game data
     games = team_gp_dict[team_code]
     if not games:
-        messagebox.showerror("Error", f"No game data available for {team_names.get(team_code, 'Unknown Team')} ({team_code}).")
+        messagebox.showerror("Error", f"No games listed for {team_names.get(team_code, 'Unknown Team')} ({team_code}).")
         return
 
     # Close the previous plot window if it exists
@@ -381,37 +382,91 @@ def on_team_select(event, tree, team_gp_dict, team_names):
 
 
 def show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team_gp_dict):
+    import tkinter as tk
+    from tkinter import ttk
+
     # Create a new window
     root = tk.Tk()
     root.title(f"Rankings as of {date_query}")
 
-    # Create a Treeview widget
-    tree = ttk.Treeview(root, columns=("Rank", "Code", "Team", "GPA"), show="headings", height=len(sorted_ratings))
-    tree.pack(fill=tk.BOTH, expand=True)
+    # Maximize the window
+    screen_width = 700 #root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()-75
+    root.geometry(f"{screen_width}x{screen_height}")
 
-    # Define the columns
-    tree.heading("Rank", text="Rank")
-    tree.heading("Code", text="Code")
-    tree.heading("Team", text="Team")
-    tree.heading("GPA", text="GPA")
+    root.grid_rowconfigure(0, weight=5)
+    root.grid_rowconfigure(1, weight=1)
+    root.grid_columnconfigure(0, weight=1)
 
+    # --- Ranked Teams Frame ---
+    ranked_frame = ttk.Frame(root)
+    ranked_frame.grid(row=0, column=0, sticky="nsew")
+
+    ranked_scrollbar = ttk.Scrollbar(ranked_frame)
+    ranked_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    tree = ttk.Treeview(
+        ranked_frame,
+        columns=("Rank", "Code", "Team", "GPA", "Games"),
+        show="headings",
+        yscrollcommand=ranked_scrollbar.set
+    )
     tree.column("Rank", width=50, anchor=tk.CENTER)
     tree.column("Code", width=50, anchor=tk.CENTER)
-    tree.column("Team", width=200, anchor=tk.CENTER)
-    tree.column("GPA", width=100, anchor=tk.CENTER)
+    tree.column("Team", width=200, anchor=tk.W)
+    tree.column("GPA", width=80, anchor=tk.CENTER)
+    tree.column("Games", width=50, anchor=tk.CENTER)
+    tree.pack(fill=tk.BOTH, expand=True)
+    ranked_scrollbar.config(command=tree.yview)
 
-    # Populate the Treeview with the sorted ratings
+    for col in ("Rank", "Code", "Team", "GPA", "Games"):
+        tree.heading(col, text=col)
+        tree.column(col, anchor=tk.CENTER)
+
     position = 1
     for code, rating in sorted_ratings:
-        if gamecount_active[code] > 2:  # Include only ranked teams
+        if gamecount_active[code] > 2:
             full_name = team_names.get(code, "Unknown Team")
-            tree.insert("", "end", values=(position, code, full_name, f"{rating:.2f}"))
+            tree.insert("", "end", values=(position, code, full_name, f"{rating:.2f}", gamecount_active[code]))
             position += 1
 
-    # Bind the Treeview selection to display a plot
     tree.bind("<<TreeviewSelect>>", lambda event: on_team_select(event, tree, team_gp_dict, team_names))
 
+    # --- Unranked Teams Frame ---
+    unranked_frame = ttk.LabelFrame(root, text="Unranked Teams")
+    unranked_frame.grid(row=1, column=0, sticky="nsew")
+
+    unranked_scrollbar = ttk.Scrollbar(unranked_frame)
+    unranked_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    unranked_tree = ttk.Treeview(
+        unranked_frame,
+        columns=("Rank", "Code", "Team", "GPA", "Games"),
+        show="headings",
+        yscrollcommand=unranked_scrollbar.set
+    )
+    unranked_tree.column("Rank", width=50, anchor=tk.CENTER)
+    unranked_tree.column("Code", width=50, anchor=tk.CENTER)
+    unranked_tree.column("Team", width=200, anchor=tk.W)
+    unranked_tree.column("GPA", width=80, anchor=tk.CENTER)
+    unranked_tree.column("Games", width=50, anchor=tk.CENTER)
+
+    unranked_tree.pack(fill=tk.BOTH, expand=True)
+    unranked_scrollbar.config(command=unranked_tree.yview)
+
+    for col in ("Rank", "Code", "Team", "GPA", "Games"):
+        unranked_tree.heading(col, text=col)
+        unranked_tree.column(col, anchor=tk.CENTER)
+
+    for code, rating in sorted_ratings:
+        if gamecount_active[code] <= 2:
+            full_name = team_names.get(code, "Unknown Team")
+            unranked_tree.insert("", "end", values=("-",code, full_name, f"{rating:.2f}", gamecount_active[code]))
+
+    unranked_tree.bind("<<TreeviewSelect>>", lambda event: on_team_select(event, unranked_tree, team_gp_dict, team_names))
+
     root.mainloop()
+
 
 
 # Display rankings with clickable teams

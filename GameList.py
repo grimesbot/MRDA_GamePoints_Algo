@@ -297,6 +297,9 @@ games = [
         ('2025-02-09','TIL', 125, 'TNF', 277),
     ],
     [   #5NRD T2M
+        ('2025-02-15','KMRD', 232, 'SWS', 178), #Part of 5NRD T2M, https://www.youtube.com/watch?v=BG7k6-2GMTQ
+        ('2025-02-15','WRD', 242, 'TNF(B)', 109), #not verified yet
+        ('2025-02-16','WRD', 185, 'SWS', 96), #not verified yet
         ('2025-02-15','WRD', 242, 'TNF(B)', 109),
         ('2025-02-16','WRD', 185, 'SWS', 96),
     ],
@@ -307,7 +310,11 @@ games = [
         ('2025-03-08','SDRD', 341, 'TIL', 150),
         ('2025-03-08','TNF', 444, 'CTB', 33),
         #('2025-03-08','BBRD', 159, 'TIL', 282), #Was this not sanctioned? https://www.youtube.com/watch?v=56o4YO7bKSQ 
+        #('2025-03-08','BBRD', 159, 'TIL', 282), #Was this not sanctioned? https://www.youtube.com/watch?v=56o4YO7bKSQ 
         ('2025-03-09','SDRD',223,'TNF',331),
+    ],
+    [
+        ('2025-03-09','TNF(B)', 320, 'CTB', 342),
     ],
     [
         ('2025-03-09','TNF(B)', 320, 'CTB', 342),
@@ -321,6 +328,11 @@ games = [
         ('2025-03-09','TMP', 135, 'PHH', 196),
         ('2025-03-09','MCM', 247, 'DDD', 81),    
     ],
+    [   #5N Gameday 2
+        ('2025-03-15','WRD', 188, 'KMRD', 138), #part of 5NT2M-2 https://fivenationsrollerderby.com/fixtures-results/tier-2-mrda-aligned-2025/
+        ('2025-03-16','SWS', 184, 'TNF(B)', 181), #not yet validated
+        ('2025-03-16','TNF(B)', 136, 'KMRD', 255), #not yet validated
+    ],
     # [
     #     ('2025-03-15','WRD', 188, 'KMRD', 138), #not yet validated
     # ],
@@ -330,6 +342,11 @@ games = [
     [   #de France - etape 2
         ('2025-03-15','RDT', 227, 'ORD', 68),
         ('2025-03-15','NDT', 117, 'RDNA', 94),
+        ('2025-03-16','ORD', 237, 'RDNA', 127),        
+        #('2025-03-16','RDT', 204, 'NDT', 70), #Was this not sanctioned? https://www.youtube.com/live/tIgjpgzDyM4?si=lOWdRAZz9sa-cLFK
+    ],
+    [
+        ('2025-03-15','CGRD', 219, 'FCF', 171),
         ('2025-03-16','ORD', 237, 'RDNA', 127),        
         #('2025-03-16','RDT', 204, 'NDT', 70), #Was this not sanctioned? https://www.youtube.com/live/tIgjpgzDyM4?si=lOWdRAZz9sa-cLFK
     ],
@@ -356,6 +373,7 @@ games = [
         ('2025-03-23','PSOD', 148, 'DGC', 305),
         ('2025-03-23','CRD', 256, 'SDA', 82),
         ('2025-03-22','CRD(B)', 106, 'SDA(B)', 200),
+        ('2025-03-22','CRD(B)', 106, 'SDA(B)', 200),
         ('2025-03-23','PSOD', 189, 'SDA', 150),
     ],
     [   #Clover Cup
@@ -363,6 +381,81 @@ games = [
         ('2025-03-29','TMP', 134, 'AUA', 205),
         ('2025-03-30','DDD', 217, 'TMP', 102),
     ],
+    [
+        ('2025-04-12','PHH(B)', 158, 'TRD', 142),
+        ('2025-04-12','CGRD', 273, 'PHH(B)', 89),        
+        ('2025-04-12','CGRD', 305, 'TRD', 140),
+    ],
+    [   #Battle of Bunker Hill
+        ('2025-04-11','PIT', 154, 'CBB', 149),
+        ('2025-04-11','CBRD', 309, 'TMRD', 187),
+        ('2025-04-12','CBRD', 161, 'PIT', 157),
+        ('2025-04-12','CBB', 315, 'TMRD', 73),
+        ('2025-04-13','TMRD', 94, 'PIT', 318),
+        ('2025-04-13','CBRD', 109, 'CBB', 149),        
+        ('2025-04-13','CBRD(B)', 134, 'PIT(B)', 429),
+    ],
+    [
+        ('2025-04-20','TNF', 110, 'RDT', 268),
+        ('2025-04-20','TIL', 11, 'RDT', 367)
+    ], 
+    [
+        ('2025-04-26','TMRD', 294, 'CGRD', 37),
+    ],
+    [    
+        ('2025-04-26','CRD', 239, 'PSOD', 58),       
+    ],    
+    [    
+        ('2025-04-27','RDNA', 188, 'ORD', 189),       
+    ],        
+    [   #Torneo Tenochititlan
+        ('2025-05-03','DIS', 79, 'SLGK', 187),
+        ('2025-05-03','MCM', 101, 'DGC', 161), # Could not find on MRDA central, but did find on https://api.mrda.org/v1-public/sanctioning/algorithm
+        ('2025-05-03','SLGK', 167, 'MCM', 97),
+        ('2025-05-04','DIS', 63, 'MCM', 190),
+        ('2025-05-04','DIS', 63, 'DGC', 210),
+    ],
+    [
+        ('2025-05-03','CGRD', 232, 'CBB(B)', 102), #Game duplicated in MRDA central
+    ],            
+    [   #5NRD T1M-3 
+        ('2025-05-10','TIL', 448, 'CTB', 98),
+        ('2025-05-10','SDRD', 279, 'BBRD', 74),    
+        ('2025-05-11','SDRD', 451, 'CTB', 88),
+        ('2025-05-11','BBRD', 97, 'TNF', 410),
+    ],
+    [   #DotD
+        ('2025-05-17','AUA', 291, 'FCF', 108),
+        ('2025-05-17','RCR', 212, 'SDA', 125),
+        ('2025-05-17','FCF', 121, 'PIT', 358),
+        ('2025-05-17','CRD', 233, 'RCR', 48),
+        ('2025-05-17','PIT', 231, 'AUA', 95),
+        ('2025-05-17','SDA', 0, 'CRD', 100),    
+        ('2025-05-18','PIT', 64, 'CRD', 340), 
+        ('2025-05-18','FCF', 63, 'RCR', 363),
+        ('2025-05-18','PIT(B)', 233, 'SDA(B)', 176),
+        ('2025-05-18','SDA', 219, 'AUA', 146),
+    ],
+    [   
+        ('2025-05-31','SDRD', 344, 'KMRD', 32),
+        ('2025-05-31','SDRD', 191, 'RDNA', 224),     
+        ('2025-05-31','KMRD', 80, 'RDNA', 329),           
+    ],
+    [ 
+        ('2025-05-31','TMRD', 108, 'PSOD', 268),
+        ('2025-05-31','PHH', 127, 'PSOD', 172),
+        ('2025-05-31','PHH', 154, 'TMRD', 130),            
+    ],
+    [
+        ('2025-05-31','RCR', 244, 'SLGK(B)', 73),       
+    ],
+    [
+        ('2025-05-31','FCF', 112, 'CGRD', 123),       
+    ],            
+    [
+        ('2025-06-01','TNF(B)', 142, 'BBRD', 311),       
+    ],                
+    
     [   #BoBH 2025
         ('2025-04-11','PIT', 154, 'CBB', 149),
         ('2025-04-11','CBRD', 309, 'TMRD', 187),

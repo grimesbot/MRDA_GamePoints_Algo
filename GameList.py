@@ -320,9 +320,9 @@ games = [
         ('2025-03-09','TMP', 135, 'PHH', 196),
         ('2025-03-09','MCM', 247, 'DDD', 81),    
     ],
-    [
-        ('2025-03-15','WRD', 188, 'KMRD', 138), #not yet validated
-    ],
+    # [
+    #     ('2025-03-15','WRD', 188, 'KMRD', 138), #not yet validated
+    # ],
     [
         ('2025-03-15','CGRD', 219, 'FCF', 171),
     ],  
@@ -339,10 +339,10 @@ games = [
         ('2025-03-16','CWB', 273, 'SLGK(B)', 106),
         ('2025-03-16','CBRD', 201, 'SLGK(B)', 104),
     ],
-    [   #5N Gameday 2
-        ('2025-03-16','SWS', 184, 'TNF(B)', 181), #not yet validated
-        ('2025-03-16','TNF(B)', 136, 'KMRD', 255), #not yet validated
-    ],
+    # [   #5N Gameday 2
+    #     ('2025-03-16','SWS', 184, 'TNF(B)', 181), #not yet validated
+    #     ('2025-03-16','TNF(B)', 136, 'KMRD', 255), #not yet validated
+    # ],
     [   #Salem Slam III
         ('2025-03-22','CRD', 257, 'PSOD', 86),
         ('2025-03-22','CRD(B)', 174, 'SDA(B)', 251),

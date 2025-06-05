@@ -12,8 +12,8 @@ initial_ratings = {'AUA': 200,'CBRD': 300,'CBRD(B)': 40,'CBB': 400,'CBB(B)': 40,
                    'RCR': 425,'SDA': 650,'SDA(B)': 120,'SLGK': 1200,'SLGK(B)': 180,
                    'TMP': 140,'TRD': 50,'TMRD': 300, 'WURD': 50000,
                    
-                   'BBRD': 600,'CTB': 250,'DHR': 200,'KMRD': 450,'MRD': 600,'MRD(B)': 100, 'NDT': 500,
-                   'ORD': 500, 'PAN': 250,'RDNA': 500, 'SDRD': 925, 'SWS': 250, 'TIL': 500,'TNF': 600,
+                   'BBRD': 600,'CTB': 250,'DHR': 200,'KMRD': 450,'MRD': 600,'MRD(B)': 100, 'NDT': 600,
+                   'ORD': 300, 'PAN': 250,'RDNA': 500, 'SDRD': 500, 'SWS': 250, 'TIL': 500,'TNF': 600,
                    'TNF(B)': 100,'RDT': 800,'WRD': 264,
                    '15RRD': 50000
                    }

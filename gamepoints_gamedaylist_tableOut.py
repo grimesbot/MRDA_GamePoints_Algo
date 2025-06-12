@@ -11,6 +11,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from tkcalendar import Calendar
 import mplcursors  # Import mplcursors for interactive annotations
+from pprint import pprint
 
 from GameList import games
 from dicts import initial_ratings
@@ -270,15 +271,17 @@ for code, rating in sorted_ratings:
         position += 1
     else:
         full_name = team_names.get(code, "Unknown Team")
-        unranked.append(full_name)
+        gamecount=gamecount_active[code]
+        unranked.append((full_name,gamecount))
 
 sorted_unranked = sorted(unranked)
 print("\n")
 print("Unranked Teams")        
-print("\n".join(sorted_unranked))
+for team, number in sorted_unranked:
+    print(f"{team} {number}")
 
 
-open_plot_window = None
+#open_plot_window = None
 
 
 def plot_team_games(team_code, team_gp_dict, team_names):
@@ -294,15 +297,20 @@ def plot_team_games(team_code, team_gp_dict, team_names):
         messagebox.showerror("Error", f"No games listed for {team_names.get(team_code, 'Unknown Team')} ({team_code}).")
         return
 
-    # Close the previous plot window if it exists
-    if open_plot_window is not None:
-        open_plot_window.destroy()
+    # # Close the previous plot window if it exists
+    # if open_plot_window is not None:
+    #     open_plot_window.destroy()
     
-    # Create a new window for the plot
-    open_plot_window = tk.Toplevel()
-    open_plot_window.title(f"Game Data for {team_names.get(team_code, 'Unknown Team')} ({team_code})")
-    open_plot_window.geometry("700x1000")
+    # # Create a new window for the plot
+    # open_plot_window = tk.Toplevel()
+    # open_plot_window.title(f"Game Data for {team_names.get(team_code, 'Unknown Team')} ({team_code})")
+    # open_plot_window.geometry("700x1000")
     
+    # Create a new independent window for each team plot
+    window = tk.Toplevel()
+    window.title(f"Game Data for {team_names.get(team_code, 'Unknown Team')} ({team_code})")
+    window.geometry("700x1000")
+
     dates = [game[0] for game in games]
     gps = [game[4] for game in games]
     gpfs = [game[5] for game in games]
@@ -328,12 +336,13 @@ def plot_team_games(team_code, team_gp_dict, team_names):
         sel.annotation.set_text(f"Date: {date}\n Score: {score}\n GP: {gpa:#6.2f}\n GPA at EOD: {gpf:#6.2f}")
 
     # Embed the plot in the window
-    canvas = FigureCanvasTkAgg(fig, master=open_plot_window)
+    canvas = FigureCanvasTkAgg(fig, master=window) #open_plot_window)
     canvas.draw()
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    plt.close(fig)
 
     # Create a frame for the table
-    table_frame = ttk.Frame(open_plot_window)
+    table_frame = ttk.Frame(window) #open_plot_window)
     table_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
     # Create the table (Treeview)
@@ -365,7 +374,7 @@ def plot_team_games(team_code, team_gp_dict, team_names):
 
 def on_team_select(event, tree, team_gp_dict, team_names):
     """Handle the event when a team is selected and open a new plot window."""
-    global open_plot_window
+    # global open_plot_window
 
     selected_item = tree.selection()
     if not selected_item:
@@ -373,12 +382,12 @@ def on_team_select(event, tree, team_gp_dict, team_names):
 
     selected_code = tree.item(selected_item, "values")[1]
 
-    # If the currently open plot window is for the same team, close it
-    if open_plot_window is not None and open_plot_window.wm_title().endswith(f"({selected_code})"):
-        open_plot_window.destroy()
-        open_plot_window = None
-    else:
-        plot_team_games(selected_code, team_gp_dict, team_names)
+    # # If the currently open plot window is for the same team, close it
+    # if open_plot_window is not None and open_plot_window.wm_title().endswith(f"({selected_code})"):
+    #     open_plot_window.destroy()
+    #     open_plot_window = None
+    # else:    
+    plot_team_games(selected_code, team_gp_dict, team_names)
 
 
 def show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team_gp_dict):

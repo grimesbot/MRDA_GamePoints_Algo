@@ -13,7 +13,8 @@ from tkcalendar import Calendar
 import mplcursors  # Import mplcursors for interactive annotations
 from pprint import pprint
 
-from GameList import games
+from GameList_history import games
+from GamesList_api import games_api
 from dicts import initial_ratings
 from dicts import team_names
 from dicts import gamecount_active
@@ -237,6 +238,9 @@ rank = RollerDerbyRanks(initial_ratings)
 
 #create a list to store the computed gp's. Probably a better way to do this...    
 # team_gp_list = [[code] for code in team_names.keys()]
+
+#Combine the games from both sources
+games.extend(games_api)
 
 #Roll through gamedays and compute scores and gpf's as it goes
 for gameday in games:

@@ -11,7 +11,6 @@ from tkinter import messagebox
 from tkinter import ttk
 from tkcalendar import Calendar
 import mplcursors  # Import mplcursors for interactive annotations
-from pprint import pprint
 
 from GameList_history import games
 from GamesList_api import games_api
@@ -77,7 +76,7 @@ class RollerDerbyRanks:
                     try:
                         power = 1/(exp)
                     except ZeroDivisionError:
-                        print(team, "problem with gpf exponent")
+                        #print(team, "problem with gpf exponent")
                         power = 0
                     
                     gpf = pow(gp,power)
@@ -130,19 +129,16 @@ class RollerDerbyRanks:
                 eb = 3
         
             # Deal with forfeits. Giving game credit to non-forfeiting team. Not using 100-0 score for now.
-            if score_a == 0 or score_b == 0:
-                if score_a == 0:
-                    # for x in team_gp_list:
-                    #     if x[0] == team_b:
-                    #         x.append((game_d,1))
+            if (score_a == 0 and score_b in (100, 250)) or (score_a in (100, 250) and score_b == 0) or (score_a == 0 and score_b == 0):
+                print(game_d, score_a, score_b)
+                if (score_a == 0 and score_b in (100, 250)):
                     team_gp_dict[team_b].append(list((game_d,f"forfeit by {score_a} {team_a}", eb, "-", 1)))
-                    #print(game_d,team_a,ra,"forfeit",team_b,rb,"1")
-                if score_b == 0:
-                    # for x in team_gp_list:
-                    #     if x[0] == team_a:
-                    #         x.append((game_d,1))
+                    print(game_d,team_a,ra,"forfeit",team_b,rb,"1")
+                if (score_a in (100, 250) and score_b == 0):
                     team_gp_dict[team_a].append(list((game_d,f"forfeit by {team_b}", ea, "-", 1)))
-                    #print(game_d,team_a,ra,"1",team_b,rb,"forfeit")
+                    print(game_d,team_a,ra,"1",team_b,rb,"forfeit")
+                if (score_a == 0 and score_b == 0):
+                    print(game_d," 0-0 score reported. MRDA Central problem?")
                 continue
             
             # Determine actual scores
@@ -236,9 +232,6 @@ print(date_query)
 
 rank = RollerDerbyRanks(initial_ratings)
 
-#create a list to store the computed gp's. Probably a better way to do this...    
-# team_gp_list = [[code] for code in team_names.keys()]
-
 #Combine the games from both sources
 games.extend(games_api)
 
@@ -285,9 +278,6 @@ for team, number in sorted_unranked:
     print(f"{team} {number}")
 
 
-#open_plot_window = None
-
-
 def plot_team_games(team_code, team_gp_dict, team_names):
     """Display a plot for the selected team's games below its row."""
     global open_plot_window
@@ -300,15 +290,6 @@ def plot_team_games(team_code, team_gp_dict, team_names):
     if not games:
         messagebox.showerror("Error", f"No games listed for {team_names.get(team_code, 'Unknown Team')} ({team_code}).")
         return
-
-    # # Close the previous plot window if it exists
-    # if open_plot_window is not None:
-    #     open_plot_window.destroy()
-    
-    # # Create a new window for the plot
-    # open_plot_window = tk.Toplevel()
-    # open_plot_window.title(f"Game Data for {team_names.get(team_code, 'Unknown Team')} ({team_code})")
-    # open_plot_window.geometry("700x1000")
     
     # Create a new independent window for each team plot
     window = tk.Toplevel()
@@ -359,7 +340,7 @@ def plot_team_games(team_code, team_gp_dict, team_names):
         game_table.column(col, anchor="center", width=100)
 
     # Insert game data into the table
-    for game in games:
+    for game in games[::-1]:
         date, score, exp_ratio, actual_ratio, gpa, gpf = game
         actual_ratio_display = f"{actual_ratio:.2f}" if isinstance(actual_ratio, (int, float)) else actual_ratio
         game_table.insert("", "end", values=(date, score, f"{exp_ratio:.2f}", actual_ratio_display, f"{gpa:.3f}"))
@@ -479,7 +460,6 @@ def show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team
     unranked_tree.bind("<<TreeviewSelect>>", lambda event: on_team_select(event, unranked_tree, team_gp_dict, team_names))
 
     root.mainloop()
-
 
 
 # Display rankings with clickable teams

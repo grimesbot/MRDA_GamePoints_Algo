@@ -64,9 +64,19 @@ class SanctionedGame:
     def __init__(self, event_data):
         self.game_datetime = event_data['game_datetime']
         self.home_team = team_map[event_data['home_league_name'] + ' - ' + event_data['home_league_charter']]
-        self.home_score = event_data['home_league_score']
         self.away_team = team_map[event_data['away_league_name'] + ' - ' + event_data['away_league_charter']]
-        self.away_score = event_data['away_league_score']
+        self.validated = event_data['status'] == '7'
+        self.forfeit = event_data['forfeit'] == 1
+        if self.forfeit and event_data['forfeit_league'] == event_data['home_league']:
+            self.home_score = 0
+            self.away_score = 100
+        elif self.forfeit and event_data['forfeit_league'] == event_data['away_league']:
+            self.home_score = 100
+            self.away_score = 0
+        else:
+            self.home_score = event_data['home_league_score']
+            self.away_score = event_data['away_league_score']
+        
 
 class SanctioningEvent:
     def __init__(self, data):
@@ -139,7 +149,12 @@ with open(gameslist_filename, "w", encoding="utf-8") as f:
             f.write(f"    [\n")
         for game in event.games:
             game_datetime = datetime.strptime(game.game_datetime, "%Y-%m-%d %H:%M:%S")
-            f.write(f"        ('{game_datetime.strftime('%Y-%m-%d')}', '{game.home_team}', {game.home_score}, '{game.away_team}', {game.away_score}),\n")
+            comment = ""
+            if game.forfeit:
+                comment += " #forfeit"
+            if not game.validated:
+                comment += " #not yet validated"
+            f.write(f"        ('{game_datetime.strftime('%Y-%m-%d')}', '{game.home_team}', {game.home_score}, '{game.away_team}', {game.away_score}),{comment}\n")
         f.write("    ],\n")
     f.write("]\n")
     

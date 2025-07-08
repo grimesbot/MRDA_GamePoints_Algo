@@ -107,6 +107,7 @@ params_unvalidated = {
     "status": 4
 }
 
+
 response_unvalidated = requests.get(url_unvalidated, params=params_unvalidated)
 response_unvalidated.raise_for_status()  # Raises an error for bad responses
 

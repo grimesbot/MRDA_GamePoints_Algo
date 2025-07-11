@@ -41,7 +41,7 @@ team_map = {
 
     'Borderland Bandits Roller Derby - primary': 'BBRD',
     'Crash Test Brummies - primary': 'CTB',
-    'D.H.R. Mens Roller Derby - primary': 'DHR',
+    'D.H.R. Men\'s Roller Derby - primary': 'DHR',
     'Kent Mens Roller Derby - primary': 'KMRD',
     'Manchester Roller Derby - primary': 'MRD',
     'Manchester Roller Derby - secondary': 'MRD(B)',

@@ -4,20 +4,23 @@ Created on Wed May  1 08:42:51 2024
 
 @author: shender
 """
+import math
 from datetime import datetime
 from datetime import date
+from dateutil.relativedelta import relativedelta
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from tkcalendar import Calendar
 import mplcursors  # Import mplcursors for interactive annotations
-from pprint import pprint
 
-from GameList import games
+from GameList_history import games
+from GamesList_api import games_api
 from dicts import initial_ratings
 from dicts import team_names
 from dicts import gamecount_active
 from dicts import team_gp_dict
+from dicts import active_forfeits
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -39,7 +42,38 @@ class RollerDerbyRanks:
     def set_gcount(self, team_name, gcount):
         self.gamecount_active[team_name] = gcount
         
+    def asymp_ratio(self, numerator, denominator):
+        """
+        Compute a smoothly limited ratio that asymptotically approaches `limit` and `1/limit`,
+        with steeper transition near 1.
         
+        Args:
+            numerator (float): The numerator of the ratio.
+            denominator (float): The denominator of the ratio.
+            limit (float): Maximum divergence allowed from 1. Must be > 1.
+            steepness (float): Controls how steep the curve is around 1. Higher = sharper transition.
+    
+        Returns:
+            float: A squashed ratio in range [1/limit, limit].
+        """
+        limit=3.0
+        steepness=1
+        
+        if denominator == 0:
+            raise ValueError("Denominator cannot be zero.")
+        if limit <= 1:
+            raise ValueError("Limit must be greater than 1.")
+        if steepness <= 0:
+            raise ValueError("Steepness must be positive.")
+        
+        raw_ratio = numerator / denominator
+        log_ratio = math.log(raw_ratio)
+        
+        # Increase steepness by scaling input to tanh
+        squashed_log = math.tanh(steepness * log_ratio) * math.log(limit)
+        
+        return math.exp(squashed_log)
+
     def compute_gpf(self, team_gp_dict, game_d):
         #compute new team score
         for team in team_gp_dict:
@@ -55,16 +89,14 @@ class RollerDerbyRanks:
                         #print(game_d, ": game too old")
                         z+=1
                         continue
-                    #elif 183 <= delta < 270: #elif x[0][0] < (game_d + relativedelta(months=-9)):
+                    elif 273 <= delta < 365: #elif x[0][0] < (game_d + relativedelta(months=-9)):
                         #print(game_d, ": games weighted to 0.25")
-                    #    wt = 0.5
-                    #elif 271 <= delta < 365: #elif x[0][0] < (game_d + relativedelta(months=-9)):
+                        wt = 0.25
+                    elif 182 <= delta < 272: #elif x[0][0] < (game_d + relativedelta(months=-9)):
                         #print(game_d, ": games weighted to 0.25")
-                    #    wt = 0.25
-                    #elif x[0] < (game_d + relativedelta(months=-6)):
-                    #    wt = 0.5
-                    if x[0].year < date_query.year:  
-                        wt = 0.1
+                        wt = 0.5
+                    #if x[0].year < date_query.year:  
+                    #    wt = 0.1
                     else:
                         wt = 1  
 
@@ -76,7 +108,7 @@ class RollerDerbyRanks:
                     try:
                         power = 1/(exp)
                     except ZeroDivisionError:
-                        print(team, "problem with gpf exponent")
+                        #print(team, "problem with gpf exponent")
                         power = 0
                     
                     gpf = pow(gp,power)
@@ -116,49 +148,54 @@ class RollerDerbyRanks:
             rb = self.ratings[team_b]
 
             # Calculate expected scores
-            ea = ra/rb
-            if ea < 0.33:
-                ea = 0.33
-            if ea > 3:
-                ea = 3
+            # ea = ra/rb
+            # if ea < 0.33:
+            #     ea = 0.33
+            # if ea > 3:
+            #     ea = 3
+            ea = self.asymp_ratio(ra,rb)
             
             eb = rb/ra
-            if eb < 0.33:
-                eb = 0.33
-            if eb > 3:
-                eb = 3
+            # if eb < 0.33:
+            #     eb = 0.33
+            # if eb > 3:
+            #     eb = 3
+            eb = self.asymp_ratio(rb,ra)
         
             # Deal with forfeits. Giving game credit to non-forfeiting team. Not using 100-0 score for now.
-            if score_a == 0 or score_b == 0:
-                if score_a == 0:
-                    # for x in team_gp_list:
-                    #     if x[0] == team_b:
-                    #         x.append((game_d,1))
-                    team_gp_dict[team_b].append(list((game_d,f"forfeit by {score_a} {team_a}", eb, "-", 1)))
+            #This has been dealt with in the score import code, but leaving here for now.
+            if (score_a == 0 and score_b in (100, 250)) or (score_a in (100, 250) and score_b == 0) or (score_a == 0 and score_b == 0):
+                if (score_a == 0 and score_b in (100, 250)):
+                    team_gp_dict[team_b].append(list((game_d,f"forfeit by {team_a}", eb, "-", 1)))
+                    if game_d > (date_query - relativedelta(months=12)):
+                        active_forfeits[team_a] += 1
                     #print(game_d,team_a,ra,"forfeit",team_b,rb,"1")
-                if score_b == 0:
-                    # for x in team_gp_list:
-                    #     if x[0] == team_a:
-                    #         x.append((game_d,1))
+                if (score_a in (100, 250) and score_b == 0):
                     team_gp_dict[team_a].append(list((game_d,f"forfeit by {team_b}", ea, "-", 1)))
+                    if game_d > (date_query - relativedelta(months=12)):
+                        active_forfeits[team_b] += 1
                     #print(game_d,team_a,ra,"1",team_b,rb,"forfeit")
+                if (score_a == 0 and score_b == 0):
+                    print(game_d," 0-0 score reported. MRDA Central problem?")
                 continue
             
             # Determine actual scores
-            sa = score_a/score_b
-            if sa < 0.33:
-                sa = 0.33
-            if sa > 3:
-                sa = 3
-            sb = score_b/score_a
-            if sb < 0.33:
-                sb = 0.33
-            if sb > 3:
-                sb = 3
-                
+            # sa = score_a/score_b
+            # if sa < 0.33:
+            #     sa = 0.33
+            # if sa > 3:
+            #     sa = 3
+            sa = self.asymp_ratio(score_a,score_b)
+            # sb = score_b/score_a
+            # if sb < 0.33:
+            #     sb = 0.33
+            # if sb > 3:
+            #     sb = 3
+            sb = self.asymp_ratio(score_b,score_a)
+            
             #Game points:
-            gpa = ra * min(3, (sa/ea))
-            gpb = rb * min(3, (sb/eb))
+            gpa = ra * max(0.33, min(3, sa/ea))
+            gpb = rb * max(0.33, min(3, sb/eb))
             
             #Add game points to game list for each teams.
             # for x in team_gp_list:
@@ -170,8 +207,8 @@ class RollerDerbyRanks:
             team_gp_dict[team_a].append(list((game_d,f"{score_a} vs {score_b} {team_b}", ea, sa, gpa)))
             team_gp_dict[team_b].append(list((game_d,f"{score_b} vs {score_a} {team_a}", eb, sb, gpb)))
 
-            #if team_a =='BOR' or team_b == 'BOR': #game_d > datetime.strptime("2024-10-07",'%Y-%m-%d').date():
-            #print(game_d, team_a, score_a, ea, sa, team_b, score_b, eb, sb)       #Uncomment for game point details
+            if team_a =='TNF' or team_b == 'TNF': #game_d > datetime.strptime("2024-10-07",'%Y-%m-%d').date():
+               print(game_d, team_a, score_a, ea, sa, team_b, score_b, eb, sb)       #Uncomment for game point details
         #print('\n')   
         
         #computescore function!!!
@@ -235,8 +272,8 @@ print(date_query)
 
 rank = RollerDerbyRanks(initial_ratings)
 
-#create a list to store the computed gp's. Probably a better way to do this...    
-# team_gp_list = [[code] for code in team_names.keys()]
+#Combine the games from both sources
+games.extend(games_api)
 
 #Roll through gamedays and compute scores and gpf's as it goes
 for gameday in games:
@@ -248,40 +285,76 @@ for gameday in games:
 #compute final gpf for the desired date
 rank.compute_gpf(team_gp_dict, date_query)
 
-# print("\n")
-# print("Active Game count")
-# pprint.pprint(gamecount_active)
-
 ratings = {team: rank.get_rating(team) for team in team_names}
 
 sorted_ratings = sorted(rank.ratings.items(), key=lambda item: item[1], reverse=True)
 
-print("\n")
-print(f"Rankings as of {date_query}")
-# Print the ratings in a formatted table
-print("Position\tTeam\tGPA\tGames Played")
-position = 1
+#position = 1
+# for code, rating in sorted_ratings:
+#     if gamecount_active[code] > 2:
+#         full_name = team_names.get(code, "Unknown Team")
+# #        print(f"{position}\t{code}\t{rating:.2f}")
+#         gamecount=gamecount_active[code]
+#         print(f"{position}\t{full_name}\t{rating:.2f}\t{gamecount}") if (gamecount > 4 or (code in ['CRD','CRD(B)','DIS','PSO','SDA','SDA(B)'] and gamecount > 2)) else print(f"{position}\t{full_name}*\t{rating:.2f}\t{gamecount}")
+#         position += 1
+#     else:
+#         full_name = team_names.get(code, "Unknown Team")
+#         gamecount=gamecount_active[code]
+#         unranked.append((full_name,gamecount))
+
+#Create final ranking table and apply forfeit penalties
+# Step 1: Build the list of eligible teams sorted by rating
+eligible_teams = []
 unranked = []
 for code, rating in sorted_ratings:
     if gamecount_active[code] > 2:
-        full_name = team_names.get(code, "Unknown Team")
-#        print(f"{position}\t{code}\t{rating:.2f}")
-        gamecount=gamecount_active[code]
-        print(f"{position}\t{full_name}\t{rating:.2f}\t{gamecount}") if (gamecount > 4 or (code in ['CRD','CRD(B)','DIS','PSO','SDA','SDA(B)'] and gamecount > 2)) else print(f"{position}\t{full_name}*\t{rating:.2f}\t{gamecount}")
-        position += 1
+        eligible_teams.append({
+            'code': code,
+            'name': team_names.get(code, "Unknown Team"),
+            'rating': rating,
+            'gamecount': gamecount_active[code],
+            'forfeits': active_forfeits.get(code, 0)
+        })
     else:
         full_name = team_names.get(code, "Unknown Team")
         gamecount=gamecount_active[code]
         unranked.append((full_name,gamecount))
+        
+# Step 2: Apply penalty as actual positional shifts
+final_list = eligible_teams.copy()
+for i in range(len(eligible_teams)):
+    team = eligible_teams[i]
+    penalty = team['forfeits'] * 2
+    if penalty == 0:
+        continue
+
+    # Calculate new position, can't go beyond end
+    new_pos = min(i + penalty, len(final_list) - 1)
+
+    # Remove and re-insert at new position
+    final_list.remove(team)
+    final_list.insert(new_pos, team)
+
+# Step 3: Print the final list
+print("\n")
+print(f"Rankings as of {date_query}")
+print("Position\tTeam\tGPA\tGames Played\tPenalty")
+for position, team in enumerate(final_list, start=1):
+    code = team['code']
+    name = team['name']
+    rating = team['rating']
+    gamecount = team['gamecount']
+    penalty = team['forfeits'] * 2
+
+    star = "*" if (gamecount <= 4 and code not in ['CRD','CRD(B)','DIS','PSO','SDA','SDA(B)']) else ""
+    print(f"{position}\t{name}{star}\t{rating:.2f}\t{gamecount}\t{penalty}")
+    
 
 sorted_unranked = sorted(unranked)
 print("\n")
 print("Unranked Teams")        
 for team, number in sorted_unranked:
     print(f"{team} {number}")
-
-
-#open_plot_window = None
 
 
 def plot_team_games(team_code, team_gp_dict, team_names):
@@ -296,15 +369,6 @@ def plot_team_games(team_code, team_gp_dict, team_names):
     if not games:
         messagebox.showerror("Error", f"No games listed for {team_names.get(team_code, 'Unknown Team')} ({team_code}).")
         return
-
-    # # Close the previous plot window if it exists
-    # if open_plot_window is not None:
-    #     open_plot_window.destroy()
-    
-    # # Create a new window for the plot
-    # open_plot_window = tk.Toplevel()
-    # open_plot_window.title(f"Game Data for {team_names.get(team_code, 'Unknown Team')} ({team_code})")
-    # open_plot_window.geometry("700x1000")
     
     # Create a new independent window for each team plot
     window = tk.Toplevel()
@@ -355,21 +419,12 @@ def plot_team_games(team_code, team_gp_dict, team_names):
         game_table.column(col, anchor="center", width=100)
 
     # Insert game data into the table
-    for game in games:
+    for game in games[::-1]:
         date, score, exp_ratio, actual_ratio, gpa, gpf = game
         actual_ratio_display = f"{actual_ratio:.2f}" if isinstance(actual_ratio, (int, float)) else actual_ratio
         game_table.insert("", "end", values=(date, score, f"{exp_ratio:.2f}", actual_ratio_display, f"{gpa:.3f}"))
 
     game_table.pack(fill=tk.BOTH, expand=True)
-
-    # Add a scrollbar
-    # scrollbar = ttk.Scrollbar(table_frame, orient="vertical", command=game_table.yview)
-    # game_table.configure(yscroll=scrollbar.set)
-    # scrollbar.pack(side="right", fill="y")
-
-    # Add a close button
-    # close_button = ttk.Button(open_plot_window, text="Close", command=open_plot_window.destroy)
-    # close_button.pack(pady=5)
 
 
 def on_team_select(event, tree, team_gp_dict, team_names):
@@ -382,15 +437,10 @@ def on_team_select(event, tree, team_gp_dict, team_names):
 
     selected_code = tree.item(selected_item, "values")[1]
 
-    # # If the currently open plot window is for the same team, close it
-    # if open_plot_window is not None and open_plot_window.wm_title().endswith(f"({selected_code})"):
-    #     open_plot_window.destroy()
-    #     open_plot_window = None
-    # else:    
     plot_team_games(selected_code, team_gp_dict, team_names)
 
 
-def show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team_gp_dict):
+def show_rankings(final_list, team_names, gamecount_active, date_query, team_gp_dict):
     import tkinter as tk
     from tkinter import ttk
 
@@ -433,10 +483,9 @@ def show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team
         tree.column(col, anchor=tk.CENTER)
 
     position = 1
-    for code, rating in sorted_ratings:
-        if gamecount_active[code] > 2:
-            full_name = team_names.get(code, "Unknown Team")
-            tree.insert("", "end", values=(position, code, full_name, f"{rating:.2f}", gamecount_active[code]))
+    for team in final_list:
+        if team['gamecount'] > 2:
+            tree.insert("", "end", values=(position, team['code'], team['name'], f"{team['rating']:.2f}", team['gamecount']))
             position += 1
 
     tree.bind("<<TreeviewSelect>>", lambda event: on_team_select(event, tree, team_gp_dict, team_names))
@@ -467,16 +516,14 @@ def show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team
         unranked_tree.heading(col, text=col)
         unranked_tree.column(col, anchor=tk.CENTER)
 
-    for code, rating in sorted_ratings:
-        if gamecount_active[code] <= 2:
-            full_name = team_names.get(code, "Unknown Team")
-            unranked_tree.insert("", "end", values=("-",code, full_name, f"{rating:.2f}", gamecount_active[code]))
+    for team in final_list:
+        if team['gamecount'] <= 2:
+            unranked_tree.insert("", "end", values=(position, team['code'], team['name'], f"{team['rating']:.2f}", team['gamecount']))
 
     unranked_tree.bind("<<TreeviewSelect>>", lambda event: on_team_select(event, unranked_tree, team_gp_dict, team_names))
 
     root.mainloop()
 
 
-
 # Display rankings with clickable teams
-show_rankings(sorted_ratings, team_names, gamecount_active, date_query, team_gp_dict)
+show_rankings(final_list, team_names, gamecount_active, date_query, team_gp_dict)

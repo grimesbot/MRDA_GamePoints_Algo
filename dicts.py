@@ -77,3 +77,5 @@ team_names = {
 gamecount_active = {key: 0 for key in team_names}
 
 team_gp_dict = {key: [] for key in team_names}
+
+active_forfeits = {key: 0 for key in team_names}

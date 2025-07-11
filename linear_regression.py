@@ -123,7 +123,7 @@ for team in teams:
             initial_ranking = team_ranking[1]
     #existing team, create virtual game
     if (initial_ranking > -1):
-        Y.append(math.log(team_ranking[1]/1.00))
+        Y.append(math.log(initial_ranking/1.00))
 
         x_col = []
         for team in teams:
@@ -210,7 +210,7 @@ for team in teams:
             initial_ranking = team_ranking[1]
     #existing team, create virtual game
     if (initial_ranking > -1):
-        Y.append(math.log(team_ranking[1]/1.00))
+        Y.append(math.log(initial_ranking/1.00))
 
         x_col = []
         for team in teams:

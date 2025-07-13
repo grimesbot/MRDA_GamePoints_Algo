@@ -48,8 +48,9 @@ for game in flattened_games:
             x_col.append(0)
     X.append(x_col)
 
-    if (score_1/score_2 > RATIO_CAP or score_2/score_1 > RATIO_CAP):
-        W.append(max(3 ** ((4 - score_1/score_2)/2), 1/1000000))
+    score_ratio = score_1/score_2 if score_1 > score_2 else score_2/score_1 
+    if (score_ratio > RATIO_CAP):
+        W.append(max(3 ** ((4 - score_ratio)/2), 1/1000000))
     else:
         W.append(1)
 
@@ -78,12 +79,13 @@ flattened_games = [ game for gameday in games_api for game in gameday]
 teams = []
 
 for game in flattened_games:
-    team_1 = game[1]
-    team_2 = game[3]
-    if not team_1 in teams:
-        teams.append(team_1)
-    if not team_2 in teams:
-        teams.append(team_2)
+    if (datetime.strptime(game[0],'%Y-%m-%d').date().year == 2024 and game[2] > 0 and game[4] > 0):    
+        team_1 = game[1]
+        team_2 = game[3]
+        if not team_1 in teams:
+            teams.append(team_1)
+        if not team_2 in teams:
+            teams.append(team_2)
 
 Y = []
 X = []
@@ -111,8 +113,9 @@ for game in flattened_games:
                 x_col.append(0)
         X.append(x_col)
 
-        if (score_1/score_2 > RATIO_CAP or score_2/score_1 > RATIO_CAP):
-            W.append(max(3 ** ((4 - score_1/score_2)/2), 1/1000000))
+        score_ratio = score_1/score_2 if score_1 > score_2 else score_2/score_1 
+        if (score_ratio > RATIO_CAP):
+            W.append(max(3 ** ((4 - score_ratio)/2), 1/1000000))
         else:
             W.append(1)
 
@@ -121,13 +124,14 @@ for team in teams:
     for team_ranking in team_rankings_2023:
         if team_ranking[0] == team:
             initial_ranking = team_ranking[1]
+            continue
     #existing team, create virtual game
     if (initial_ranking > -1):
         Y.append(math.log(initial_ranking/1.00))
 
         x_col = []
-        for team in teams:
-            if (team == team_1):
+        for t in teams:
+            if (t == team):
                 x_col.append(1)
             else:
                 x_col.append(0)
@@ -136,8 +140,8 @@ for team in teams:
         close_games_count = 0
 
         for g in flattened_games:
-            if (datetime.strptime(game[0],'%Y-%m-%d').date().year == 2024):
-                if ((g[1] == team or g[3] == team) and g[2]/g[4] < RATIO_CAP and g[4]/g[2] < RATIO_CAP):
+            if (datetime.strptime(g[0],'%Y-%m-%d').date().year == 2024):
+                if ((g[1] == team or g[3] == team) and g[2] > 0 and g[4] > 0 and g[2]/g[4] < RATIO_CAP and g[4]/g[2] < RATIO_CAP):
                     close_games_count+=1
 
         if (close_games_count >= 5):
@@ -146,7 +150,7 @@ for team in teams:
             W.append(1)
 
 result = sm.WLS(Y, X, W).fit().params
-rankings = [ math.exp(log_result) * RANKING_SCALE for log_result in result ]
+rankings = [ math.exp(log_result) for log_result in result ]
 
 team_rankings_2024 = []
 
@@ -165,12 +169,13 @@ print("")
 teams = []
 
 for game in flattened_games:
-    team_1 = game[1]
-    team_2 = game[3]
-    if not team_1 in teams:
-        teams.append(team_1)
-    if not team_2 in teams:
-        teams.append(team_2)
+    if (datetime.strptime(game[0],'%Y-%m-%d').date().year == 2025 and game[2] > 0 and game[4] > 0):
+        team_1 = game[1]
+        team_2 = game[3]
+        if not team_1 in teams:
+            teams.append(team_1)
+        if not team_2 in teams:
+            teams.append(team_2)
 
 Y = []
 X = []
@@ -198,8 +203,9 @@ for game in flattened_games:
                 x_col.append(0)
         X.append(x_col)
 
-        if (score_1/score_2 > RATIO_CAP or score_2/score_1 > RATIO_CAP):
-            W.append(max(3 ** ((4 - score_1/score_2)/2), 1/1000000))
+        score_ratio = score_1/score_2 if score_1 > score_2 else score_2/score_1 
+        if (score_ratio > RATIO_CAP):
+            W.append(max(3 ** ((4 - score_ratio)/2), 1/1000000))
         else:
             W.append(1)
 
@@ -208,13 +214,14 @@ for team in teams:
     for team_ranking in team_rankings_2024:
         if team_ranking[0] == team:
             initial_ranking = team_ranking[1]
+            continue
     #existing team, create virtual game
     if (initial_ranking > -1):
         Y.append(math.log(initial_ranking/1.00))
 
         x_col = []
-        for team in teams:
-            if (team == team_1):
+        for t in teams:
+            if (t == team):
                 x_col.append(1)
             else:
                 x_col.append(0)
@@ -223,8 +230,8 @@ for team in teams:
         close_games_count = 0
 
         for g in flattened_games:
-            if (datetime.strptime(game[0],'%Y-%m-%d').date().year == 2025):
-                if ((g[1] == team or g[3] == team) and g[2]/g[4] < RATIO_CAP and g[4]/g[2] < RATIO_CAP):
+            if (datetime.strptime(g[0],'%Y-%m-%d').date().year == 2025):
+                if ((g[1] == team or g[3] == team) and g[2] > 0 and g[4] > 0 and g[2]/g[4] < RATIO_CAP and g[4]/g[2] < RATIO_CAP):
                     close_games_count+=1
 
         if (close_games_count >= 5):
@@ -233,7 +240,7 @@ for team in teams:
             W.append(1)
 
 result = sm.WLS(Y, X, W).fit().params
-rankings = [ math.exp(log_result) * RANKING_SCALE for log_result in result ]
+rankings = [ math.exp(log_result) for log_result in result ]
 
 
 team_rankings_2025 = []
